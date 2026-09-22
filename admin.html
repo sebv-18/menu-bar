@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colico Restobar - Panel Admin</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase App y Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --primary-color: #ff9800;
+      --primary-hover: #e68900;
+      --text-main: #ffffff;
+      --text-muted: #a0a0a0;
+      --accent-color: #272727;
+      --fire-color: #ff4757;
+      --btn-green: #2ed573;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px;
+      display: none; /* Oculto por defecto hasta que ponga contraseña */
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 15px;
+    }
+
+    header h1 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+    }
+
+    .admin-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--accent-color);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .form-card h2 {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      color: var(--text-muted);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-color);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    .save-btn {
+      background-color: var(--btn-green);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .save-btn:hover {
+      opacity: 0.9;
+    }
+
+    .product-list-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--accent-color);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--accent-color);
+    }
+
+    .product-info h4 {
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+
+    .product-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .delete-btn {
+      background-color: var(--fire-color);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <a href="index.html" class="back-link">← Volver al Menú Público</a>
+    
+    <header>
+      <h1>Panel de Administración</h1>
+      <p>Agrega o elimina platos de tu menú</p>
+    </header>
+
+    <!-- Formulario para Agregar Producto -->
+    <div class="form-card">
+      <h2>Agregar Nuevo Plato / Bebestible</h2>
+      <form id="productForm" onsubmit="guardarProducto(event)">
+        <div class="form-group">
+          <label for="nombre">Nombre del Producto:</label>
+          <input type="text" id="nombre" required placeholder="Ej: Chorrillana Completa">
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción:</label>
+          <textarea id="descripcion" required placeholder="Ingredientes detallados..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoría:</label>
+          <select id="categoria" required>
+            <option value="burgers">Hamburguesas</option>
+            <option value="pizzas">Pizzas</option>
+            <option value="bebidas">Bebidas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio ($ CLP):</label>
+          <input type="number" id="precio" required placeholder="Ej: 8500">
+        </div>
+
+        <div class="form-group">
+          <label for="imagen">URL de la Imagen:</label>
+          <input type="url" id="imagen" required placeholder="https://ejemplo.com/imagen.jpg">
+        </div>
+
+        <button type="submit" class="save-btn" id="submitBtn">Guardar Producto en el Menú</button>
+      </form>
+    </div>
+
+    <!-- Lista de Productos Existentes -->
+    <div class="product-list-card">
+      <h2>Platos Actuales en la Base de Datos</h2>
+      <div id="adminProductList">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Cargando productos...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // CAMBIA AQUÍ TU CONTRASEÑA DE ADMINISTRADOR:
+    const ADMIN_PASSWORD = "1234";
+
+    // Sistema de seguridad por contraseña al abrir la página
+    window.onload = function() {
+      const password = prompt("Ingresa la contraseña de administración:");
+      if (password === ADMIN_PASSWORD) {
+        document.body.style.display = "block"; // Muestra la página si la clave es correcta
+      } else {
+        alert("Contraseña incorrecta. Acceso denegado.");
+        window.location.href = "index.html"; // Redirige al menú público si falla
+      }
+    };
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqJ6vXWssxZEPWc6v6oUbV-1QpLDla1A8",
+      authDomain: "menu-c7a37.firebaseapp.com",
+      projectId: "menu-c7a37",
+      storageBucket: "menu-c7a37.appspot.com",
+      messagingSenderId: "971482670586",
+      appId: "1:971482670586:web:a91b95cb2f2917a2e807043",
+      measurementId: "G-8Q7ZXZFT63"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      db.collection("productos").onSnapshot((snapshot) => {
+        const listContainer = document.getElementById('adminProductList');
+        if (snapshot.empty) {
+          listContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No hay productos registrados.</p>';
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach((doc) => {
+          const prod = doc.data();
+          html += `
+            <div class="product-item">
+              <div class="product-info">
+                <h4>${prod.nombre} (${prod.categoria})</h4>
+                <p>$${prod.precio.toLocaleString('es-CL')} - ${prod.descripcion}</p>
+              </div>
+              <button class="delete-btn" onclick="eliminarProducto('${doc.id}')">Eliminar</button>
+            </div>
+          `;
+        });
+        listContainer.innerHTML = html;
+      });
+    });
+
+    function guardarProducto(e) {
+      e.preventDefault();
+      
+      const nombre = document.getElementById('nombre').value.trim();
+      const descripcion = document.getElementById('descripcion').value.trim();
+      const categoria = document.getElementById('categoria').value;
+      const precio = parseInt(document.getElementById('precio').value);
+      const imagen = document.getElementById('imagen').value.trim();
+
+      const btn = document.getElementById('submitBtn');
+      btn.innerText = "Guardando...";
+      btn.disabled = true;
+
+      db.collection("productos").add({
+        nombre,
+        descripcion,
+        categoria,
+        precio,
+        imagen
+      })
+      .then(() => {
+        alert("¡Plato agregado con éxito!");
+        document.getElementById('productForm').reset();
+        btn.innerText = "Guardar Producto en el Menú";
+        btn.disabled = false;
+      })
+      .catch((error) => {
+        console.error("Error al guardar: ", error);
+        alert("Hubo un error al guardar el producto.");
+        btn.innerText = "Guardar Producto en el Menú";
+        btn.disabled = false;
+      });
+    }
+
+    function eliminarProducto(id) {
+      if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+        db.collection("productos").doc(id).delete()
+        .then(() => {})
+        .catch((error) => {
+          console.error("Error al eliminar: ", error);
+          alert("No se pudo eliminar el producto.");
+        });
+      }
+    }
+  </script>
+</body>
+</html>
