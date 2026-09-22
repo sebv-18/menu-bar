@@ -1,142 +1,112 @@
-// Número de teléfono de recepción del pedido (sin +)
-const NUMERO_WHATSAPP = "56912345678";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colico Restobar - Menú Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// Lista de productos con imágenes estables de Unsplash
-const productos = [
-  {
-    id: 1,
-    nombre: "PLAYA LA ISLA",
-    ingredientes: ["Papas fritas"],
-    imagen: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80",
-    precios: [
-      { porcion: "1-2 PERSONAS", valor: 3500 },
-      { porcion: "3-4 PERSONAS", valor: 5500 }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "PLAYA HOGAR",
-    ingredientes: ["Papas fritas", "Salchichas"],
-    imagen: "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=500&q=80",
-    precios: [
-      { porcion: "1-2 PERSONAS", valor: 4000 },
-      { porcion: "3-4 PERSONAS", valor: 6500 }
-    ]
-  },
-  {
-    id: 3,
-    nombre: "PLAYA PONCIANO CASTRO",
-    ingredientes: ["Papas fritas", "Tocino", "Queso derretido"],
-    imagen: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500&q=80",
-    precios: [
-      { porcion: "1-2 PERSONAS", valor: 5500 },
-      { porcion: "3-4 PERSONAS", valor: 10000 }
-    ]
-  }
-];
+  <!-- Encabezado -->
+  <header class="header">
+    <h1 class="logo-title">COLICO RESTOBAR</h1>
+    <p class="subtitle">CUNCO • ARAUCANÍA</p>
 
-let carrito = [];
+    <!-- Buscador -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar en el menú..." onkeyup="filterMenu()">
+    </div>
+  </header>
 
-function cargarMenu() {
-  const contenedor = document.getElementById('menu-container');
-  contenedor.innerHTML = '';
+  <!-- Categorías -->
+  <nav class="categories">
+    <button class="cat-btn active" onclick="filterCategory('todos', this)">Todos</button>
+    <button class="cat-btn" onclick="filterCategory('papas', this)">Box Papas</button>
+    <button class="cat-btn" onclick="filterCategory('burgers', this)">Hamburguesas</button>
+    <button class="cat-btn" onclick="filterCategory('chorrillanas', this)">Chorrillanas</button>
+    <button class="cat-btn" onclick="filterCategory('bebidas', this)">Barra</button>
+  </nav>
 
-  productos.forEach(prod => {
-    const tarjeta = document.createElement('article');
-    tarjeta.className = 'tarjeta-plato';
-
-    const preciosHTML = prod.precios.map((p, index) => `
-      <button class="btn-precio" onclick="agregarAlCarrito(${prod.id}, ${index})">
-        <span class="porcion">${p.porcion}</span>
-        <span class="valor">$${p.valor.toLocaleString('es-CL')}</span>
-      </button>
-    `).join('');
-
-    tarjeta.innerHTML = `
-      <h2>${prod.nombre}</h2>
-      <img src="${prod.imagen}" alt="${prod.nombre}">
-      <p class="ingredientes"><strong>INGREDIENTES:</strong> ${prod.ingredientes.join(', ')}</p>
-      <div class="precios-grid">${preciosHTML}</div>
-    `;
-
-    contenedor.appendChild(tarjeta);
-  });
-}
-
-function agregarAlCarrito(productoId, precioIndex) {
-  const producto = productos.find(p => p.id === productoId);
-  const opcionPrecio = producto.precios[precioIndex];
-
-  const item = {
-    idUnico: Date.now(),
-    nombre: producto.nombre,
-    porcion: opcionPrecio.porcion,
-    precio: opcionPrecio.valor
-  };
-
-  carrito.push(item);
-  actualizarCarritoUI();
-}
-
-function eliminarDelCarrito(idUnico) {
-  carrito = carrito.filter(item => item.idUnico !== idUnico);
-  actualizarCarritoUI();
-}
-
-function actualizarCarritoUI() {
-  const contenedorCarrito = document.getElementById('lista-carrito');
-  const totalElemento = document.getElementById('total-precio');
-  const btnWsp = document.getElementById('btn-whatsapp');
-
-  if (carrito.length === 0) {
-    contenedorCarrito.innerHTML = '<p class="carrito-vacio" style="color: #888888; text-align: center;">El carrito está vacío</p>';
-    totalElemento.textContent = '$0';
-    btnWsp.disabled = true;
-    return;
-  }
-
-  contenedorCarrito.innerHTML = '';
-  let total = 0;
-
-  carrito.forEach(item => {
-    total += item.precio;
-    const div = document.createElement('div');
-    div.className = 'item-carrito';
-    div.innerHTML = `
-      <div class="item-info">
-        <p><strong>${item.nombre}</strong></p>
-        <small>${item.porcion} - $${item.precio.toLocaleString('es-CL')}</small>
+  <!-- Grilla de Productos -->
+  <main class="menu-grid" id="menuGrid">
+    <!-- Papas -->
+    <article class="card" data-category="papas">
+      <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=400&auto=format&fit=crop');"></div>
+      <div class="card-body">
+        <h3>PLAYA LA ISLA</h3>
+        <p>Papas fritas tradicionales crujientes</p>
+        <div class="card-footer">
+          <span class="price">$3.500</span>
+          <button class="add-btn" onclick="addToCart('Playa La Isla', 3500)">+ Agregar</button>
+        </div>
       </div>
-      <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.idUnico})">✕</button>
-    `;
-    contenedorCarrito.appendChild(div);
-  });
+    </article>
 
-  totalElemento.textContent = `$${total.toLocaleString('es-CL')}`;
-  btnWsp.disabled = false;
-}
+    <article class="card" data-category="papas">
+      <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1585109649139-366815a0d713?q=80&w=400&auto=format&fit=crop');"></div>
+      <div class="card-body">
+        <h3>PLAYA PONCIANO</h3>
+        <p>Papas fritas, tocino picado y queso fundido</p>
+        <div class="card-footer">
+          <span class="price">$5.500</span>
+          <button class="add-btn" onclick="addToCart('Playa Ponciano', 5500)">+ Agregar</button>
+        </div>
+      </div>
+    </article>
 
-function enviarPedidoWhatsApp() {
-  if (carrito.length === 0) return;
+    <!-- Hamburguesas -->
+    <article class="card" data-category="burgers">
+      <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400&auto=format&fit=crop');"></div>
+      <div class="card-body">
+        <h3>LA CALLAMPERA</h3>
+        <p>Smash carne, queso, champiñones, cebolla caramelizada</p>
+        <div class="card-footer">
+          <span class="price">$7.500</span>
+          <button class="add-btn" onclick="addToCart('La Callampera', 7500)">+ Agregar</button>
+        </div>
+      </div>
+    </article>
 
-  let mensaje = "Hola! 🍟 Quisiera hacer el siguiente pedido:\n\n";
-  let total = 0;
+    <article class="card" data-category="burgers">
+      <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=400&auto=format&fit=crop');"></div>
+      <div class="card-body">
+        <h3>COLICO BURGER</h3>
+        <p>Doble smash carne, tocino, palta molida y lechuga</p>
+        <div class="card-footer">
+          <span class="price">$8.500</span>
+          <button class="add-btn" onclick="addToCart('Colico Burger', 8500)">+ Agregar</button>
+        </div>
+      </div>
+    </article>
 
-  carrito.forEach((item, index) => {
-    mensaje += `${index + 1}. *${item.nombre}* (${item.porcion}) - $${item.precio.toLocaleString('es-CL')}\n`;
-    total += item.precio;
-  });
+    <!-- Chorrillanas -->
+    <article class="card" data-category="chorrillanas">
+      <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?q=80&w=400&auto=format&fit=crop');"></div>
+      <div class="card-body">
+        <h3>CODIHUE</h3>
+        <p>Papas fritas, carne de vacuno salteada, cebolla y huevos</p>
+        <div class="card-footer">
+          <span class="price">$10.000</span>
+          <button class="add-btn" onclick="addToCart('Codihue', 10000)">+ Agregar</button>
+        </div>
+      </div>
+    </article>
+  </main>
 
-  mensaje += `\n*Total a pagar: $${total.toLocaleString('es-CL')}*\n\n`;
-  mensaje += "Quedo atento a la confirmación.";
+  <!-- Barra de Pedido Inferior -->
+  <div class="order-bar">
+    <div class="order-info">
+      <div class="cart-badge" id="cartCount">0</div>
+      <div>
+        <small>Total a pagar</small>
+        <div class="total-price" id="cartTotal">$0</div>
+      </div>
+    </div>
+    <button class="checkout-btn" onclick="sendOrder()">Ver Pedido &gt;</button>
+  </div>
 
-  const mensajeEncoded = encodeURIComponent(mensaje);
-  const urlWhatsApp = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensajeEncoded}`;
-
-  window.open(urlWhatsApp, '_blank');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  cargarMenu();
-  document.getElementById('btn-whatsapp').addEventListener('click', enviarPedidoWhatsApp);
-});
+  <script src="script.js"></script>
+</body>
+</html>
