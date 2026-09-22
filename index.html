@@ -4,207 +4,141 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Colico Restobar - Menú Digital</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase App (Base) y Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
-      --bg-color: #0f1115;
-      --card-bg: #181a20;
-      --primary-color: #f1c40f;
-      --btn-green: #2ecc71;
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --primary-color: #ff9800;
+      --primary-hover: #e68900;
       --text-main: #ffffff;
-      --text-muted: #8a8d93;
-      --border-color: #262930;
-      --fire-color: #e74c3c;
+      --text-muted: #a0a0a0;
+      --accent-color: #272727;
+      --fire-color: #ff4757;
+      --btn-green: #2ed573;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Outfit', sans-serif;
     }
 
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
-      padding-bottom: 90px;
+      padding-bottom: 100px;
     }
 
-    /* Encabezado */
-    .header {
-      background-color: #14161d;
+    header {
+      background: linear-gradient(135deg, #1f1f1f, #121212);
+      padding: 20px;
       text-align: center;
-      padding: 24px 16px 16px;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 2px solid var(--primary-color);
     }
 
-    .logo-title {
+    header h1 {
       color: var(--primary-color);
-      font-size: 1.6rem;
-      font-weight: 900;
-      letter-spacing: 1px;
+      font-size: 1.8rem;
+      margin-bottom: 5px;
     }
 
-    .subtitle {
+    header p {
       color: var(--text-muted);
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      margin-top: 4px;
-    }
-
-    .search-box {
-      margin: 16px auto 0;
-      max-width: 450px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 10px 16px;
-      background-color: #090a0d;
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      color: #fff;
       font-size: 0.9rem;
+    }
+
+    .search-container {
+      padding: 15px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 25px;
+      border: 1px solid var(--accent-color);
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      font-size: 1rem;
       outline: none;
     }
 
-    .search-box input:focus {
+    .search-container input:focus {
       border-color: var(--primary-color);
     }
 
-    /* Banner Desafío */
-    .hero-banner {
-      max-width: 600px;
-      margin: 16px auto;
-      padding: 0 16px;
-    }
-
-    .banner-card {
-      background: linear-gradient(135deg, #1c0f0d 0%, #2a1810 100%);
-      border: 2px solid var(--primary-color);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(241, 196, 15, 0.2);
-    }
-
-    .banner-img-container {
-      width: 100%;
-      height: 180px;
-      position: relative;
-    }
-
-    .banner-img-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .badge-fire {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: var(--fire-color);
-      color: #fff;
-      font-weight: bold;
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 12px;
-      text-transform: uppercase;
-    }
-
-    .banner-content {
-      padding: 16px;
-    }
-
-    .banner-content h2 {
-      color: var(--primary-color);
-      font-size: 1.3rem;
-      font-weight: 900;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .banner-content p {
-      font-size: 0.78rem;
-      color: #dcdcdc;
-      line-height: 1.3;
-      margin-bottom: 12px;
-    }
-
-    .banner-footer {
+    .categories-scroll {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .banner-price {
-      font-size: 1.2rem;
-      font-weight: 900;
-      color: var(--primary-color);
-    }
-
-    .banner-btn {
-      background-color: var(--primary-color);
-      color: #000;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    /* Navegación por Categorías */
-    .categories {
-      display: flex;
-      gap: 8px;
-      padding: 12px 16px;
+      gap: 10px;
       overflow-x: auto;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 10px 20px 20px 20px;
+      scrollbar-width: none;
+    }
+
+    .categories-scroll::-webkit-scrollbar {
+      display: none;
     }
 
     .cat-btn {
       background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
+      color: var(--text-main);
+      border: 1px solid var(--accent-color);
       padding: 8px 16px;
       border-radius: 20px;
-      font-size: 0.85rem;
       white-space: nowrap;
       cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
 
-    .cat-btn.active {
+    .cat-btn.active, .cat-btn:hover {
       background-color: var(--primary-color);
       color: #000;
-      font-weight: bold;
       border-color: var(--primary-color);
     }
 
-    /* Grilla de Productos */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 16px;
-      max-width: 600px;
+    .container {
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
     }
 
     .card {
       background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
       border-radius: 12px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      border: 1px solid var(--accent-color);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
     }
 
     .card-img-container {
       width: 100%;
-      height: 110px;
-      background-color: #22252e;
+      height: 160px;
+      overflow: hidden;
+      background-color: #2a2a2a;
     }
 
     .card-img-container img {
@@ -214,74 +148,65 @@
     }
 
     .card-body {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
+      padding: 15px;
     }
 
     .card-body h3 {
-      font-size: 0.85rem;
-      color: #fff;
-      margin-bottom: 4px;
-      text-transform: uppercase;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
     }
 
     .card-body p {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 8px;
-      line-height: 1.2;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
-    /* Selector de Tamaños */
     .size-selector {
       display: flex;
-      gap: 4px;
-      margin-bottom: 8px;
+      gap: 5px;
+      margin-bottom: 10px;
     }
 
     .size-btn {
-      flex: 1;
-      background: #0d0e12;
-      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      border: 1px solid var(--accent-color);
       color: var(--text-muted);
-      font-size: 0.62rem;
-      padding: 4px 2px;
-      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
       cursor: pointer;
-      text-align: center;
     }
 
     .size-btn.selected {
       border-color: var(--primary-color);
       color: var(--primary-color);
-      font-weight: bold;
-      background: rgba(241, 196, 15, 0.1);
     }
 
     .card-footer {
+      padding: 15px;
+      border-top: 1px solid var(--accent-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 10px 10px 10px;
     }
 
     .price {
+      font-size: 1.1rem;
+      font-weight: 700;
       color: var(--primary-color);
-      font-weight: bold;
-      font-size: 0.85rem;
     }
 
     .add-btn {
       background-color: transparent;
-      border: 1px solid var(--primary-color);
       color: var(--primary-color);
-      padding: 4px 8px;
+      border: 1px solid var(--primary-color);
+      padding: 6px 12px;
       border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: bold;
       cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
     }
 
     .add-btn:hover {
@@ -289,51 +214,36 @@
       color: #000;
     }
 
-    /* Barra Inferior */
-    .order-bar {
+    /* Floating Cart Bar */
+    .floating-cart {
       position: fixed;
       bottom: 0;
       left: 0;
-      right: 0;
-      background-color: #14161d;
-      border-top: 1px solid var(--border-color);
-      padding: 12px 20px;
+      width: 100%;
+      background-color: #1a1a1a;
+      border-top: 2px solid var(--primary-color);
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 600px;
-      margin: 0 auto;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
       z-index: 100;
     }
 
-    .order-info {
+    .cart-info {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column;
     }
 
-    .cart-badge {
-      background-color: var(--primary-color);
-      color: #000;
-      font-weight: bold;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-    }
-
-    .order-info small {
+    .cart-info span:first-child {
+      font-size: 0.8rem;
       color: var(--text-muted);
-      font-size: 0.65rem;
-      display: block;
     }
 
-    .total-price {
-      font-size: 1.1rem;
-      font-weight: bold;
+    .cart-info span:last-child {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
     }
 
     .checkout-btn {
@@ -341,21 +251,24 @@
       color: #fff;
       border: none;
       padding: 10px 20px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 0.85rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
       cursor: pointer;
     }
 
-    /* Modal de Checkout */
+    /* Modal / Drawer de Pedido */
     .modal-overlay {
-      display: none;
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
       justify-content: center;
       align-items: flex-end;
+      z-index: 200;
     }
 
     .modal-overlay.active {
@@ -363,26 +276,28 @@
     }
 
     .modal-content {
-      background: #181a20;
+      background-color: var(--card-bg);
       width: 100%;
       max-width: 600px;
+      max-height: 85vh;
       border-top-left-radius: 20px;
       border-top-right-radius: 20px;
       padding: 20px;
-      border-top: 1px solid var(--border-color);
-      max-height: 85vh;
       overflow-y: auto;
+      border-top: 2px solid var(--primary-color);
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--accent-color);
+      padding-bottom: 10px;
     }
 
-    .modal-header h3 {
-      font-size: 1.1rem;
+    .modal-header h2 {
+      font-size: 1.3rem;
       color: var(--primary-color);
     }
 
@@ -390,348 +305,213 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       cursor: pointer;
     }
 
     .form-group {
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
 
     .form-group label {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
       color: var(--text-muted);
-      margin-bottom: 4px;
     }
 
     .form-group input, .form-group select {
       width: 100%;
       padding: 10px;
-      background: #090a0d;
-      border: 1px solid var(--border-color);
       border-radius: 8px;
-      color: #fff;
-      font-size: 0.85rem;
-      outline: none;
+      border: 1px solid var(--accent-color);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-size: 0.95rem;
     }
 
-    .cart-items-list {
-      margin: 16px 0;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 0;
+    .cart-items-summary {
+      margin: 15px 0;
       max-height: 150px;
       overflow-y: auto;
+      border-top: 1px dashed var(--accent-color);
+      border-bottom: 1px dashed var(--accent-color);
+      padding: 10px 0;
     }
 
     .cart-item-row {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
     }
 
-    .whatsapp-btn {
+    .send-whatsapp-btn {
       width: 100%;
-      background-color: #25D366;
-      color: #fff;
+      background-color: #25d366;
+      color: white;
       border: none;
       padding: 12px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 0.95rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
       margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Encabezado -->
-  <header class="header">
-    <h1 class="logo-title">COLICO RESTOBAR</h1>
-    <p class="subtitle">CUNCO • ARAUCANÍA</p>
-
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Buscar en el menú..." onkeyup="filterMenu()">
-    </div>
+  <header>
+    <h1>Colico Restobar</h1>
+    <p>¡Haz tu pedido online de forma rápida!</p>
   </header>
 
-  <!-- Banner Desafío -->
-  <section class="hero-banner">
-    <div class="banner-card">
-      <div class="banner-img-container">
-        <span class="badge-fire">🔥 DESAFÍO</span>
-        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop" alt="Desafío">
-      </div>
-      <div class="banner-content">
-        <h2>DESAFÍO</h2>
-        <p>3 Smash carne 150g, queso cheddar, tocino, 3 huevos, aros de cebolla, lechuga, palta, queso mantecoso + Papas fritas + Bebida. <strong>¡Si te la comes en 20 minutos te la llevas gratis!</strong></p>
-        <div class="banner-footer">
-          <span class="banner-price">$25.000</span>
-          <button class="banner-btn" onclick="addDesafioToCart()">Pedir Desafío</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Categorías -->
-  <nav class="categories">
-    <button class="cat-btn active" onclick="filterCategory('todos', this)">Todos</button>
-    <button class="cat-btn" onclick="filterCategory('burgers', this)">Hamburguesas</button>
-    <button class="cat-btn" onclick="filterCategory('chorrillanas', this)">Chorrillanas</button>
-    <button class="cat-btn" onclick="filterCategory('coctel', this)">Picoteo</button>
-    <button class="cat-btn" onclick="filterCategory('tragos', this)">Tragos</button>
-    <button class="cat-btn" onclick="filterCategory('pasteleria', this)">Pastelería</button>
-  </nav>
-
-  <!-- Grilla -->
-  <main class="menu-grid" id="menuGrid">
-
-    <!-- HAMBURGUESAS -->
-    <article class="card" data-category="burgers">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=400&auto=format&fit=crop" alt="Hamburguesa Champiñón">
-      </div>
-      <div class="card-body">
-        <h3>HAMBURGUESA CHAMPIÑÓN</h3>
-        <p>Carne, queso mantecoso, champiñones salteados y cebolla caramelizada</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 7500, 'Simple')">Simple</button>
-          <button class="size-btn" onclick="selectSize(this, 9500, 'Doble')">Doble</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="7500" data-size="Simple">$7.500</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <article class="card" data-category="burgers">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=400&auto=format&fit=crop" alt="Hamburguesa Tocino Palta">
-      </div>
-      <div class="card-body">
-        <h3>HAMBURGUESA TOCINO PALTA</h3>
-        <p>Carne, tocino crocante, queso cheddar, palta molida y salsa de la casa</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 8000, 'Simple')">Simple</button>
-          <button class="size-btn" onclick="selectSize(this, 10000, 'Doble')">Doble</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="8000" data-size="Simple">$8.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <!-- CHORRILLANAS -->
-    <article class="card" data-category="chorrillanas">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?q=80&w=400&auto=format&fit=crop" alt="Papas Cheddar Tocino">
-      </div>
-      <div class="card-body">
-        <h3>PAPAS CHEDDAR TOCINO</h3>
-        <p>Papas fritas crujientes con tocino picado y queso cheddar fundido</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 5500, 'Mediana')">Mediana</button>
-          <button class="size-btn" onclick="selectSize(this, 10000, 'Familiar')">Familiar</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="5500" data-size="Mediana">$5.500</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <article class="card" data-category="chorrillanas">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1585109649139-366815a0d713?q=80&w=400&auto=format&fit=crop" alt="Chorrillana Tradicional">
-      </div>
-      <div class="card-body">
-        <h3>CHORRILLANA TRADICIONAL</h3>
-        <p>Papas fritas, carne de vacuno, cebolla caramelizada y huevos fritos</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 10000, 'Mediana')">Mediana</button>
-          <button class="size-btn" onclick="selectSize(this, 16000, 'Familiar')">Familiar</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="10000" data-size="Mediana">$10.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <!-- PICOTEO -->
-    <article class="card" data-category="coctel">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=400&auto=format&fit=crop" alt="Empanadas de Queso">
-      </div>
-      <div class="card-body">
-        <h3>EMPANADAS DE QUESO</h3>
-        <p>Empanaditas fritas de cóctel rellenas de queso mantecoso</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 4500, '6 Uds')">6 Unidades</button>
-          <button class="size-btn" onclick="selectSize(this, 8000, '12 Uds')">12 Unidades</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="4500" data-size="6 Uds">$4.500</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <article class="card" data-category="coctel">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=400&auto=format&fit=crop" alt="Tabla Picoteo Mixto">
-      </div>
-      <div class="card-body">
-        <h3>TABLA PICOTEO MIXTO</h3>
-        <p>Tiras de pollo, empanaditas de queso y aros de cebolla</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 7000, 'Mediana')">Mediana</button>
-          <button class="size-btn" onclick="selectSize(this, 12000, 'Familiar')">Familiar</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="7000" data-size="Mediana">$7.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <!-- TRAGOS -->
-    <article class="card" data-category="tragos">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=400&auto=format&fit=crop" alt="Mojito">
-      </div>
-      <div class="card-body">
-        <h3>MOJITO</h3>
-        <p>Ron blanco, menta fresca, limón, azúcar y soda</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 4500, 'Vaso')">Vaso</button>
-          <button class="size-btn" onclick="selectSize(this, 8000, 'Jarra')">Jarra</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="4500" data-size="Vaso">$4.500</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <article class="card" data-category="tragos">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=400&auto=format&fit=crop" alt="Pisco Sour">
-      </div>
-      <div class="card-body">
-        <h3>PISCO SOUR</h3>
-        <p>Pisco, jugo de limón natural y amargo de angostura</p>
-        <div class="size-selector">
-          <button class="size-btn selected" onclick="selectSize(this, 4000, 'Copa')">Copa</button>
-          <button class="size-btn" onclick="selectSize(this, 7500, 'Doble')">Doble</button>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="4000" data-size="Copa">$4.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <!-- PASTELERÍA -->
-    <article class="card" data-category="pasteleria">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400&auto=format&fit=crop" alt="Snickers Caseros">
-      </div>
-      <div class="card-body">
-        <h3>SNICKERS CASEROS</h3>
-        <p>Sin azúcar, libre de culpa, sabor natural</p>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="3000" data-size="Único">$3.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-    <article class="card" data-category="pasteleria">
-      <div class="card-img-container">
-        <img src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?q=80&w=400&auto=format&fit=crop" alt="Alfajores">
-      </div>
-      <div class="card-body">
-        <h3>ALFAJORES DE AVENA</h3>
-        <p>Elaborados con harina de avena y dátiles</p>
-      </div>
-      <div class="card-footer">
-        <span class="price" data-current-price="3000" data-size="Único">$3.000</span>
-        <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
-      </div>
-    </article>
-
-  </main>
-
-  <!-- Barra de Pedido Flotante -->
-  <div class="order-bar">
-    <div class="order-info">
-      <div class="cart-badge" id="cartCount">0</div>
-      <div>
-        <small>Total a pagar</small>
-        <div class="total-price" id="cartTotal">$0</div>
-      </div>
-    </div>
-    <button class="checkout-btn" onclick="openModal()">Ver Pedido &gt;</button>
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Busca tu plato o bebestible favorito..." oninput="filterMenu()">
   </div>
 
-  <!-- Modal de Finalización -->
+  <div class="categories-scroll">
+    <button class="cat-btn active" onclick="filterCategory('todos', this)">Todos</button>
+    <button class="cat-btn" onclick="filterCategory('burgers', this)">Hamburguesas</button>
+    <button class="cat-btn" onclick="filterCategory('pizzas', this)">Pizzas</button>
+    <button class="cat-btn" onclick="filterCategory('bebidas', this)">Bebidas</button>
+  </div>
+
+  <main class="container">
+    <section id="menuGrid" class="grid">
+      <!-- Los productos se cargarán dinámicamente desde Firestore -->
+    </section>
+  </main>
+
+  <!-- Barra Flotante del Carrito -->
+  <div class="floating-cart">
+    <div class="cart-info">
+      <span><span id="cartCount">0</span> productos</span>
+      <span id="cartTotal">$0</span>
+    </div>
+    <button class="checkout-btn" onclick="openModal()">Ver Pedido</button>
+  </div>
+
+  <!-- Modal / Drawer para Finalizar Pedido -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Finalizar tu Pedido</h3>
-        <button class="close-modal" onclick="closeModal()">✕</button>
+        <h2>Detalles de tu Pedido</h2>
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div class="cart-items-summary" id="cartItemsList">
+        <!-- Ítems del carrito se inyectan aquí -->
       </div>
 
       <div class="form-group">
-        <label>Tu Nombre:</label>
-        <input type="text" id="clientName" placeholder="Ej: Carlos Pérez">
+        <label for="clientName">Tu Nombre:</label>
+        <input type="text" id="clientName" placeholder="Ej: Juan Pérez">
       </div>
 
       <div class="form-group">
-        <label>Tipo de Pedido:</label>
+        <label for="orderType">Tipo de Pedido:</label>
         <select id="orderType" onchange="toggleAddressField()">
-          <option value="Para Retirar en Local">Para Retirar en Local</option>
+          <option value="Retiro en Local">Retiro en Local</option>
           <option value="Despacho a Domicilio">Despacho a Domicilio</option>
         </select>
       </div>
 
       <div class="form-group" id="addressGroup" style="display: none;">
-        <label>Dirección de Entrega:</label>
-        <input type="text" id="clientAddress" placeholder="Ej: Calle Los Aromos 123">
+        <label for="clientAddress">Dirección de Entrega:</label>
+        <input type="text" id="clientAddress" placeholder="Calle, Número, Depto/Villa">
       </div>
 
-      <label style="font-size: 0.75rem; color: var(--text-muted);">Resumen del Carrito:</label>
-      <div class="cart-items-list" id="cartItemsList">
-        <p style="font-size:0.8rem; color:var(--text-muted); text-align:center;">Tu carrito está vacío</p>
-      </div>
-
-      <button class="whatsapp-btn" onclick="sendWhatsAppOrder()">
-        📲 Enviar Pedido por WhatsApp
-      </button>
+      <button class="send-whatsapp-btn" onclick="sendWhatsAppOrder()">Enviar Pedido por WhatsApp 📲</button>
     </div>
   </div>
 
   <script>
+    // Configuración de Firebase para tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqJ6vXWssxZEPWc6v6oUbV-1QpLDla1A8",
+      authDomain: "menu-c7a37.firebaseapp.com",
+      projectId: "menu-c7a37",
+      storageBucket: "menu-c7a37.appspot.com",
+      messagingSenderId: "971482670586",
+      appId: "1:971482670586:web:a91b95cb2f2917a2e807043",
+      measurementId: "G-8Q7ZXZFT63"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     let cart = [];
+    let allProducts = [];
+
+    // Cargar productos desde Firestore al iniciar la página
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarMenuDesdeFirestore();
+    });
+
+    function cargarMenuDesdeFirestore() {
+      const menuGrid = document.getElementById('menuGrid');
+      menuGrid.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column: span 2;">Cargando menú en tiempo real...</p>';
+
+      db.collection("productos").onSnapshot((snapshot) => {
+        allProducts = [];
+        snapshot.forEach((doc) => {
+          allProducts.push({ id: doc.id, ...doc.data() });
+        });
+        renderMenu(allProducts);
+      }, (error) => {
+        console.error("Error al cargar productos: ", error);
+        menuGrid.innerHTML = '<p style="color:var(--fire-color); text-align:center; grid-column: span 2;">Error al cargar el menú desde la base de datos.</p>';
+      });
+    }
+
+    function renderMenu(productos) {
+      const menuGrid = document.getElementById('menuGrid');
+      if (productos.length === 0) {
+        menuGrid.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column: span 2;">No hay productos disponibles aún.</p>';
+        return;
+      }
+
+      let html = '';
+      productos.forEach(prod => {
+        let sizeButtonsHtml = '';
+        let initialPrice = prod.precio;
+        let initialSize = 'Único';
+
+        if (prod.tamanios && prod.tamanios.length > 0) {
+          initialPrice = prod.tamanios[0].precio;
+          initialSize = prod.tamanios[0].nombre;
+          prod.tamanios.forEach((t, index) => {
+            const isSelected = index === 0 ? 'selected' : '';
+            sizeButtonsHtml += `<button class="size-btn ${isSelected}" onclick="selectSize(this, ${t.precio}, '${t.nombre}')">${t.nombre}</button>`;
+          });
+        }
+
+        html += `
+          <article class="card" data-category="${prod.categoria}">
+            <div class="card-img-container">
+              <img src="${prod.imagen}" alt="${prod.nombre}">
+            </div>
+            <div class="card-body">
+              <h3>${prod.nombre}</h3>
+              <p>${prod.descripcion}</p>
+              ${prod.tamanios && prod.tamanios.length > 0 ? `<div class="size-selector">${sizeButtonsHtml}</div>` : ''}
+            </div>
+            <div class="card-footer">
+              <span class="price" data-current-price="${initialPrice}" data-size="${initialSize}">$${initialPrice.toLocaleString('es-CL')}</span>
+              <button class="add-btn" onclick="addCardToCart(this)">+ Agregar</button>
+            </div>
+          </article>
+        `;
+      });
+      menuGrid.innerHTML = html;
+    }
 
     function addToCart(name, price, size) {
       cart.push({ name, price, size });
       updateCartUI();
-    }
-
-    function addDesafioToCart() {
-      addToCart("DESAFÍO", 25000, "Estándar");
-      alert("¡Desafío agregado al carrito!");
     }
 
     function selectSize(btn, newPrice, sizeName) {
@@ -845,9 +625,7 @@
 
       message += `\n💰 *Total a Pagar:* $${total.toLocaleString('es-CL')}`;
 
-      // Reemplaza con tu número de WhatsApp real (código país + número, ej: 56912345678)
-      const phoneNumber = "56912345678"; 
-      
+      const phoneNumber = "56912345678"; // Cambia este número por el de tu local (con código de país)
       const encodedMessage = encodeURIComponent(message);
       window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
     }
